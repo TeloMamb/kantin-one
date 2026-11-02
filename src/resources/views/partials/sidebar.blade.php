@@ -2,7 +2,7 @@
     $role = auth()->user()->role ?? '';
 
     $menus = match ($role) {
-        'administrator' => [
+        'super_admin', 'administrator' => [
             [
                 'label' => 'Dashboard',
                 'icon' => 'fa-solid fa-house',
@@ -136,7 +136,7 @@
         </div>
         <div class="sidebar-user-info">
             <strong>{{ auth()->user()->name }}</strong>
-            <small>{{ $role }}</small>
+            <small>{{ ucwords(str_replace('_', ' ', $role)) }}</small>
         </div>
     </div>
     <div class="sidebar-menu-label">MENU UTAMA</div>

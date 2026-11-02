@@ -23,13 +23,39 @@ class UserController extends Controller
         );
     }
 
+    private function ensureUserAccessible(User $user): void
+    {
+        abort_if(
+            $user->isSuperAdmin() && !auth()->user()?->isSuperAdmin(),
+            403,
+            'Anda tidak memiliki akses untuk mengelola akun Super Admin.'
+        );
+    }
+
+    private function ensureUserNotProtected(User $user): void
+    {
+        $this->ensureUserAccessible($user);
+
+        abort_if(
+            $user->is_protected,
+            403,
+            'Akun Super Admin utama tidak dapat diubah melalui aplikasi.'
+        );
+    }
+
     private function roles(): array
     {
-        return [
+        $roles = [
             'administrator',
             'canteen_manager',
             'tenant',
         ];
+
+        if (auth()->user()?->isSuperAdmin()) {
+            array_unshift($roles, 'super_admin');
+        }
+
+        return $roles;
     }
 
     /*
@@ -71,6 +97,10 @@ class UserController extends Controller
         $this->ensureAdministrator();
 
         $users = User::query()
+            ->when(
+                    !auth()->user()->isSuperAdmin(),
+                    fn ($query) => $query->where('role', '!=', 'super_admin')
+                )
             ->when($request->input('search'), function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
@@ -155,6 +185,7 @@ class UserController extends Controller
         ]);
 
         $validated['is_active'] = true;
+        $validated['is_protected'] = false;
 
         User::create($validated);
 
@@ -175,6 +206,8 @@ class UserController extends Controller
 
         $user = $this->selectUser($request);
 
+        $this->ensureUserAccessible($user);
+
         session()->put('users.selected_user_id', $user->id);
 
         return redirect()->route('users.show');
@@ -185,6 +218,8 @@ class UserController extends Controller
         $this->ensureAdministrator();
 
         $user = $this->selectedUser();
+
+        $this->ensureUserAccessible($user);
 
         return view('users.show', compact('user'));
     }
@@ -201,6 +236,8 @@ class UserController extends Controller
 
         $user = $this->selectUser($request);
 
+        $this->ensureUserNotProtected($user);
+
         session()->put('users.selected_user_id', $user->id);
 
         return redirect()->route('users.edit');
@@ -211,6 +248,8 @@ class UserController extends Controller
         $this->ensureAdministrator();
 
         $user = $this->selectedUser();
+
+        $this->ensureUserNotProtected($user);
 
         return view('users.edit', [
             'user' => $user,
@@ -223,6 +262,8 @@ class UserController extends Controller
         $this->ensureAdministrator();
 
         $user = $this->selectedUser();
+
+        $this->ensureUserNotProtected($user);
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -290,13 +331,17 @@ class UserController extends Controller
 
         $user = $this->selectUser($request);
 
+        $this->ensureUserNotProtected($user);
+
         if ($user->id === auth()->id()) {
             return back()
                 ->with('error', 'Anda tidak dapat mengubah status akun sendiri.');
         }
 
-        // Lindungi Administrator aktif terakhir.
+        // Lindungi Administrator aktif terakhir dari Administrator biasa.
+        // Super Admin tetap boleh menonaktifkannya.
         if (
+            !auth()->user()->isSuperAdmin() &&
             $user->is_active &&
             $user->role === 'administrator' &&
             User::where('role', 'administrator')
@@ -330,6 +375,8 @@ class UserController extends Controller
 
         $user = $this->selectUser($request);
 
+        $this->ensureUserNotProtected($user);
+
         if ($user->id === auth()->id()) {
             return back()
                 ->with('error', 'Anda tidak dapat menghapus akun sendiri.');
@@ -358,6 +405,10 @@ class UserController extends Controller
         $this->ensureAdministrator();
 
         $users = User::onlyTrashed()
+            ->when(
+                !auth()->user()->isSuperAdmin(),
+                fn ($query) => $query->where('role', '!=', 'super_admin')
+            )
             ->latest('deleted_at')
             ->paginate(10);
 
@@ -369,6 +420,8 @@ class UserController extends Controller
         $this->ensureAdministrator();
 
         $user = $this->selectUser($request, true);
+
+        $this->ensureUserNotProtected($user);
 
         $user->restore();
 
@@ -382,6 +435,8 @@ class UserController extends Controller
         $this->ensureAdministrator();
 
         $user = $this->selectUser($request, true);
+
+        $this->ensureUserNotProtected($user);
 
         $userId = $user->id;
 
@@ -414,6 +469,8 @@ class UserController extends Controller
 
         $user = $this->selectUser($request);
 
+        $this->ensureUserNotProtected($user);
+
         // Simpan target reset password.
         session()->put('users.reset_password_user_id', $user->id);
 
@@ -437,6 +494,8 @@ class UserController extends Controller
 
         $user = User::findOrFail($userId);
 
+        $this->ensureUserNotProtected($user);
+
         return view('users.resetpassword', compact('user'));
     }
 
@@ -453,6 +512,8 @@ class UserController extends Controller
         );
 
         $user = User::findOrFail($userId);
+
+        $this->ensureUserNotProtected($user);
 
         $validated = $request->validate([
             'password' => [

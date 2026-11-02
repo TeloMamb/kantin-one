@@ -91,21 +91,23 @@
                                         </button>
                                     </form>
 
-                                    {{-- Hapus Permanen --}}
-                                    <form action="{{ route('users.force-delete') }}"
-                                          method="POST"
-                                          class="force-delete-user-form"
-                                          data-name="{{ $user->name }}">
+                                    @if (!$user->is_protected)
+                                        {{-- Hapus Permanen --}}
+                                        <form action="{{ route('users.force-delete') }}"
+                                            method="POST"
+                                            class="force-delete-user-form"
+                                            data-name="{{ $user->name }}">
 
-                                        @csrf
-                                        <input type="hidden" name="user_id" value="{{ $user->id }}">
+                                            @csrf
+                                            <input type="hidden" name="user_id" value="{{ $user->id }}">
 
-                                        <button type="submit"
-                                                class="btn btn-sm btn-outline-danger"
-                                                title="Hapus Permanen">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
-                                    </form>
+                                            <button type="submit"
+                                                    class="btn btn-sm btn-outline-danger"
+                                                    title="Hapus Permanen">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    @endif
 
                                 </div>
                             </td>

@@ -109,55 +109,57 @@
 
             <div class="card-body">
 
-                {{-- Edit Pengguna --}}
-                <form action="{{ route('users.select-edit') }}"
-                      method="POST"
-                      class="mb-2">
-                    @csrf
-                    <input type="hidden" name="user_id" value="{{ $user->id }}">
-
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-edit me-2"></i>
-                        Edit Pengguna
-                    </button>
-                </form>
-
-                @if ($user->id !== auth()->id())
-
-                    {{-- Toggle Status --}}
-                    <form action="{{ route('users.toggle-status') }}"
-                          method="POST"
-                          class="status-form mb-2"
-                          data-name="{{ $user->name }}"
-                          data-active="{{ $user->is_active ? '1' : '0' }}">
-
+                @if (!$user->is_protected)
+                    {{-- Edit Pengguna --}}
+                    <form action="{{ route('users.select-edit') }}"
+                            method="POST"
+                            class="mb-2">
                         @csrf
                         <input type="hidden" name="user_id" value="{{ $user->id }}">
 
-                        <button type="submit"
-                                class="btn {{ $user->is_active ? 'btn-outline-danger' : 'btn-outline-success' }} w-100">
-                            <i class="fas {{ $user->is_active ? 'fa-user-slash' : 'fa-user-check' }} me-2"></i>
-                            {{ $user->is_active ? 'Nonaktifkan Akun' : 'Aktifkan Akun' }}
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-edit me-2"></i>
+                            Edit Pengguna
                         </button>
                     </form>
 
-                    @if (!$user->is_active)
+                    @if ($user->id !== auth()->id())
 
-                        {{-- Soft Delete --}}
-                        <form action="{{ route('users.destroy') }}"
-                              method="POST"
-                              class="delete-user-form"
-                              data-name="{{ $user->name }}">
+                        {{-- Toggle Status --}}
+                        <form action="{{ route('users.toggle-status') }}"
+                                method="POST"
+                                class="status-form mb-2"
+                                data-name="{{ $user->name }}"
+                                data-active="{{ $user->is_active ? '1' : '0' }}">
 
                             @csrf
                             <input type="hidden" name="user_id" value="{{ $user->id }}">
 
-                            <button type="submit" class="btn btn-outline-danger w-100">
-                                <i class="fas fa-trash me-2"></i>
-                                Hapus Akun
+                            <button type="submit"
+                                    class="btn {{ $user->is_active ? 'btn-outline-danger' : 'btn-outline-success' }} w-100">
+                                <i class="fas {{ $user->is_active ? 'fa-user-slash' : 'fa-user-check' }} me-2"></i>
+                                {{ $user->is_active ? 'Nonaktifkan Akun' : 'Aktifkan Akun' }}
                             </button>
                         </form>
 
+                        @if (!$user->is_active)
+
+                            {{-- Soft Delete --}}
+                            <form action="{{ route('users.destroy') }}"
+                                    method="POST"
+                                    class="delete-user-form"
+                                    data-name="{{ $user->name }}">
+
+                                @csrf
+                                <input type="hidden" name="user_id" value="{{ $user->id }}">
+
+                                <button type="submit" class="btn btn-outline-danger w-100">
+                                    <i class="fas fa-trash me-2"></i>
+                                    Hapus Akun
+                                </button>
+                            </form>
+
+                        @endif
                     @endif
 
                 @else

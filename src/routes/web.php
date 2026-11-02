@@ -9,7 +9,7 @@ Route::get('/', function () {
         : redirect()->route('login');
 });
 
-Route::middleware(['auth', 'prevent.back'])->group(function () {    
+Route::middleware(['auth', 'prevent.back', 'role:administrator'])->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard.index');
     })->name('dashboard');
