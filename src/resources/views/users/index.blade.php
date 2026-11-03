@@ -45,9 +45,17 @@
                     <i class="fa-solid fa-user-plus me-1"></i>
                     <span>Tambah Akun</span>
                 </a>
+                <a href="#" class="btn btn-sm btn-outline-secondary">
+                    <i class="fa-solid fa-user-lock me-1"></i>
+                    <span>Pemulihan Akun</span>
+                </a>
                 <a href="{{ route('users.trash') }}" class="btn btn-sm btn-outline-danger">
                     <i class="fa-solid fa-user-lock me-1"></i>
                     <span>Akun Kadaluarsa</span>
+                </a>
+                <a href="#" class="btn btn-sm btn-outline-warning text-dark">
+                    <i class="fas fa-key"></i>
+                    <span>Reset Password</span>
                 </a>
                 <a href="#" class="btn btn-sm btn-outline-info text-dark">
                     <i class="fa-solid fa-eye me-1"></i>

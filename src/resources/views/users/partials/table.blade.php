@@ -26,8 +26,12 @@
                     </td>
                     <td>{{ $user->username }}</td>
                     <td>
-                        @if ($user->role === 'administrator')
+                        @if ($user->role === 'super_admin')
                             <span class="badge text-bg-danger">
+                                {{ ucwords(str_replace('_', ' ', $user->role)) }}
+                            </span>
+                        @elseif ($user->role === 'administrator')
+                            <span class="badge text-bg-warning">
                                 {{ ucwords(str_replace('_', ' ', $user->role)) }}
                             </span>
                         @else
@@ -114,19 +118,21 @@
             @empty
                 <tr>
                     <td colspan="6" class="text-center py-5 text-muted">
-                        <i class="fas fa-users fa-2x mb-3 d-block"></i>
-                        Tidak ada pengguna ditemukan.
+                        <div class="bg-primary-subtle rounded-circle d-flex justify-content-center align-items-center
+                            mb-2 mx-auto" style="width: 4rem; height: 4rem;">
+                            <i class="fas fa-users fs-2 text-primary"></i>
+                        </div>
+                        <div class="fw-semibold mb-1">Tidak ada akun ditemukan</div>
                     </td>
                 </tr>
             @endforelse
         </tbody>
     </table>
 </div>
-
 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
     <small class="text-muted">
         Menampilkan {{ $users->firstItem() ?? 0 }} sampai {{ $users->lastItem() ?? 0 }}
-        dari {{ $users->total() }} pengguna
+        dari {{ $users->total() }} akun
     </small>
     {{ $users->links() }}
 </div>
