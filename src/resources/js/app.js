@@ -5,6 +5,7 @@ import Chart from 'chart.js/auto';
 import './modules/tooltips.js';
 import './pages/auth/login.js';
 import './layouts/dashboard.js';
+import './pages/tenants.js';
 
 window.bootstrap = bootstrap;
 window.Swal = Swal;

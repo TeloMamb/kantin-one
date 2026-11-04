@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\TenantController;
 
 Route::get('/', function () {
     return auth()->check()
@@ -10,68 +11,137 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth', 'prevent.back', 'role:administrator'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard.index');
-    })->name('dashboard');
 
-    Route::get('/orders', function () {
-        return view('orders.index');
-    })->name('orders.index');
-    
-    // User Management
-    Route::post('/users/search', [UserController::class, 'index'])
-    ->name('users.search');
+    /* Pages */
+    /* -------------------------------------------------------------------------- */
+        Route::get('/dashboard', function () {
+            return view('dashboard.index');
+        })->name('dashboard');
 
-    // Index & Create
-    Route::get('/users', [UserController::class, 'index'])
-        ->name('users.index');
+        Route::get('/orders', function () {
+            return view('orders.index');
+        })->name('orders.index');
+    /* -------------------------------------------------------------------------- */
 
-    Route::get('/users/create', [UserController::class, 'create'])
-        ->name('users.create');
+    /* User Management */
+    /* -------------------------------------------------------------------------- */
+        Route::post('/users/search', [UserController::class, 'index'])
+        ->name('users.search');
 
-    Route::post('/users', [UserController::class, 'store'])
-        ->name('users.store');
+        /* Index & Create */
+        /* -------------------------------------------------------------------------- */
+            Route::get('/users', [UserController::class, 'index'])
+                ->name('users.index');
 
-    // Detail & Edit: pilih pengguna melalui POST
-    Route::post('/users/detail', [UserController::class, 'selectDetail'])
-        ->name('users.select-detail');
+            Route::get('/users/create', [UserController::class, 'create'])
+                ->name('users.create');
 
-    Route::get('/users/detail', [UserController::class, 'show'])
-        ->name('users.show');
+            Route::post('/users', [UserController::class, 'store'])
+                ->name('users.store');
+        /* -------------------------------------------------------------------------- */
 
-    Route::post('/users/edit', [UserController::class, 'selectEdit'])
-        ->name('users.select-edit');
+        /* Detail & Edit: pilih pengguna melalui POST */
+        /* -------------------------------------------------------------------------- */
+            Route::post('/users/detail', [UserController::class, 'selectDetail'])
+                ->name('users.select-detail');
 
-    Route::get('/users/edit', [UserController::class, 'edit'])
-        ->name('users.edit');
+            Route::get('/users/detail', [UserController::class, 'show'])
+                ->name('users.show');
 
-    Route::put('/users/edit', [UserController::class, 'update'])
-        ->name('users.update');
+            Route::post('/users/edit', [UserController::class, 'selectEdit'])
+                ->name('users.select-edit');
 
-    // Status & Delete
-    Route::post('/users/status', [UserController::class, 'toggleStatus'])
-        ->name('users.toggle-status');
+            Route::get('/users/edit', [UserController::class, 'edit'])
+                ->name('users.edit');
 
-    Route::post('/users/delete', [UserController::class, 'destroy'])
-        ->name('users.destroy');
+            Route::put('/users/edit', [UserController::class, 'update'])
+                ->name('users.update');
+        /* -------------------------------------------------------------------------- */
 
-    // Trash, Restore & Permanent Delete
-    Route::get('/users/trash', [UserController::class, 'trash'])
-        ->name('users.trash');
+        /* Status & Delete */
+        /* -------------------------------------------------------------------------- */
+            Route::post('/users/status', [UserController::class, 'toggleStatus'])
+                ->name('users.toggle-status');
 
-    Route::post('/users/restore', [UserController::class, 'restore'])
-        ->name('users.restore');
+            Route::post('/users/delete', [UserController::class, 'destroy'])
+                ->name('users.destroy');
+        /* -------------------------------------------------------------------------- */
 
-    Route::post('/users/forcedelete', [UserController::class, 'forceDelete'])
-        ->name('users.force-delete');
+        /* Trash, Restore & Permanent Delete */
+        /* -------------------------------------------------------------------------- */
+            Route::get('/users/trash', [UserController::class, 'trash'])
+                ->name('users.trash');
 
-    // Reset Password
-    Route::post('/users/resetpassword/start', [UserController::class, 'startPasswordReset'])
-        ->name('users.resetpassword.start');
+            Route::post('/users/restore', [UserController::class, 'restore'])
+                ->name('users.restore');
 
-    Route::get('/users/resetpassword', [UserController::class, 'editPassword'])
-        ->name('users.resetpassword.edit');
+            Route::post('/users/forcedelete', [UserController::class, 'forceDelete'])
+                ->name('users.force-delete');
+        /* -------------------------------------------------------------------------- */
 
-    Route::patch('/users/resetpassword', [UserController::class, 'updatePassword'])
-        ->name('users.resetpassword.update');
+        /* Reset Password */
+        /* -------------------------------------------------------------------------- */
+            Route::post('/users/resetpassword/start', [UserController::class, 'startPasswordReset'])
+                ->name('users.resetpassword.start');
+
+            Route::get('/users/resetpassword', [UserController::class, 'editPassword'])
+                ->name('users.resetpassword.edit');
+
+            Route::patch('/users/resetpassword', [UserController::class, 'updatePassword'])
+                ->name('users.resetpassword.update');
+        /* -------------------------------------------------------------------------- */
+
+    /* -------------------------------------------------------------------------- */
+
+    /* Tenant Management */
+    /* -------------------------------------------------------------------------- */
+        /* Index & Search */
+        /* -------------------------------------------------------------------------- */
+            Route::post('/tenants/search', [TenantController::class, 'index'])
+            ->name('tenants.search');
+
+            Route::get('/tenants', [TenantController::class, 'index'])
+                ->name('tenants.index');
+        /* -------------------------------------------------------------------------- */
+
+        /* Create */
+        /* -------------------------------------------------------------------------- */
+            Route::get('/tenants/create', [TenantController::class, 'create'])
+                ->name('tenants.create');
+
+            Route::post('/tenants', [TenantController::class, 'store'])
+                ->name('tenants.store');
+        /* -------------------------------------------------------------------------- */
+
+        /* Detail */
+        /* -------------------------------------------------------------------------- */
+            Route::post('/tenants/detail', [TenantController::class, 'selectDetail'])
+                ->name('tenants.select-detail');
+
+            Route::get('/tenants/detail', [TenantController::class, 'show'])
+                ->name('tenants.show');
+        /* -------------------------------------------------------------------------- */
+
+        /* Edit */
+        /* -------------------------------------------------------------------------- */
+            Route::post('/tenants/edit', [TenantController::class, 'selectEdit'])
+                ->name('tenants.select-edit');
+
+            Route::get('/tenants/edit', [TenantController::class, 'edit'])
+                ->name('tenants.edit');
+
+            Route::put('/tenants/edit', [TenantController::class, 'update'])
+                ->name('tenants.update');
+        /* -------------------------------------------------------------------------- */
+
+        /* Status & Delete */
+        /* -------------------------------------------------------------------------- */
+            Route::post('/tenants/status', [TenantController::class, 'toggleStatus'])
+                ->name('tenants.toggle-status');
+
+            Route::post('/tenants/delete', [TenantController::class, 'destroy'])
+                ->name('tenants.destroy');
+        /* -------------------------------------------------------------------------- */
+
+    /* -------------------------------------------------------------------------- */
 });

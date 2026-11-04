@@ -11,6 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable(['name', 'email', 'username', 'password', 'role', 'is_active', 'is_protected'])]
 #[Hidden(['password', 'remember_token'])]
@@ -52,5 +53,13 @@ class User extends Authenticatable
     public function isTenant(): bool
     {
         return $this->role === 'tenant';
+    }
+
+    /**
+     * Tenant tempat pengguna bertugas.
+     */
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(Tenant::class);
     }
 }

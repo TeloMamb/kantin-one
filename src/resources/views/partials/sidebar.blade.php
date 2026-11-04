@@ -24,7 +24,7 @@
             [
                 'label' => 'Manajemen Tenant',
                 'icon' => 'fa-solid fa-store',
-                'url' => '#',
+                'url' => route('tenants.index'),
                 'active' => ['tenants*'],
             ],
             [

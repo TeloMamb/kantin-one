@@ -102,8 +102,16 @@
                             <select name="role" id="role" class="form-select @error('role') is-invalid @enderror" required>
                                 <option value="">Pilih Peran</option>
                                 @foreach ($roles as $role)
-                                    <option value="{{ $role }}" @selected(old('role') === $role)>
-                                        {{ ucwords(str_replace('_', ' ', $role)) }}
+                                    <option value="{{ $role }}"
+                                        @selected(old('role') === $role)>
+                                        {{ match ($role) {
+                                            'super_admin' => 'Super Admin',
+                                            'administrator' => 'Administrator',
+                                            'canteen_manager' => 'Kepala Pengelolaan Tenant',
+                                            'tenant' => 'Kepala Tenant',
+                                            'tenant_employee' => 'Pegawai Tenant',
+                                            default => $role,
+                                        } }}
                                     </option>
                                 @endforeach
                             </select>
@@ -111,8 +119,33 @@
                                 Mohon pilih peran sesuai tanggung jawab.
                             </div>
                             @error('role')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <div class="text-danger small mt-1">{{ $message }}</div>
                             @enderror
+                        </div>
+
+                        {{-- Penempatan Tenant --}}
+                        <div class="mb-3 d-none" id="tenantField">
+                            <label for="tenant_id" class="form-label fw-semibold">
+                                Tenant <span class="text-danger">*</span>
+                            </label>
+                            <select name="tenant_id" id="tenant_id" class="form-select @error('tenant_id') is-invalid @enderror">
+                                <option value="">Pilih Tenant</option>
+                                @foreach ($tenants as $tenant)
+                                    <option value="{{ $tenant->id }}"
+                                        @selected(old('tenant_id') == $tenant->id)>
+                                        {{ $tenant->code }} - {{ $tenant->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div class="invalid-feedback">
+                                Silakan pilih tenant.
+                            </div>
+                            @error('tenant_id')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
+                            <small class="text-muted">
+                                Pilih tenant tempat pengguna ini bertugas.
+                            </small>
                         </div>
 
                         {{-- Password --}}
