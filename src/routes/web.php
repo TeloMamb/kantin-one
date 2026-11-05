@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TenantController;
+use App\Http\Controllers\ProductController;
 
 Route::get('/', function () {
     return auth()->check()
@@ -144,4 +145,58 @@ Route::middleware(['auth', 'prevent.back', 'role:administrator'])->group(functio
         /* -------------------------------------------------------------------------- */
 
     /* -------------------------------------------------------------------------- */
+
+    
+    /* Product Management */
+    /* -------------------------------------------------------------------------- */
+
+    /* Index & Search */
+    Route::post('/products/search', [ProductController::class, 'index'])
+        ->name('products.search');
+
+    Route::get('/products', [ProductController::class, 'index'])
+        ->name('products.index');
+
+    /* Create */
+    Route::get('/products/create', [ProductController::class, 'create'])
+        ->name('products.create');
+
+    Route::post('/products', [ProductController::class, 'store'])
+        ->name('products.store');
+
+    /* Detail */
+    Route::post('/products/detail', [ProductController::class, 'selectDetail'])
+        ->name('products.select-detail');
+
+    Route::get('/products/detail', [ProductController::class, 'show'])
+        ->name('products.show');
+
+    /* Edit */
+    Route::post('/products/edit', [ProductController::class, 'selectEdit'])
+        ->name('products.select-edit');
+
+    Route::get('/products/edit', [ProductController::class, 'edit'])
+        ->name('products.edit');
+
+    Route::put('/products/edit', [ProductController::class, 'update'])
+        ->name('products.update');
+
+    /* Availability & Delete */
+    Route::post('/products/status', [ProductController::class, 'toggleStatus'])
+        ->name('products.toggle-status');
+
+    Route::post('/products/delete', [ProductController::class, 'destroy'])
+        ->name('products.destroy');
+
+    Route::get('/products/trash', [ProductController::class, 'trash'])
+        ->name('products.trash');
+
+    Route::post('/products/restore', [ProductController::class, 'restore'])
+        ->name('products.restore');
+
+    Route::post('/products/force-delete', [ProductController::class, 'forceDelete'])
+        ->name('products.force-delete');
+
+    /* -------------------------------------------------------------------------- */
+
 });

@@ -28,6 +28,12 @@
                 'active' => ['tenants*'],
             ],
             [
+                'label' => 'Manajemen Produk',
+                'icon' => 'fa-solid fa-users',
+                'url' => route('products.index'),
+                'active' => ['products*'],
+            ],
+            [
                 'label' => 'Laporan',
                 'icon' => 'fa-solid fa-chart-pie',
                 'url' => '#',

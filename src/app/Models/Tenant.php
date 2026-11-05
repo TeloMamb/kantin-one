@@ -44,4 +44,10 @@ class Tenant extends Model
         return $this->hasMany(User::class)
             ->where('role', 'tenant_employee');
     }
+
+    
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class);
+    }
 }
