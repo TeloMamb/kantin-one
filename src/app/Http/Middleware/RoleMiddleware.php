@@ -12,7 +12,7 @@ class RoleMiddleware
     {
         $user = $request->user();
 
-        if (!$user) {
+        if (! $user) {
             abort(403, 'Anda tidak memiliki akses ke halaman ini.');
         }
 
@@ -22,7 +22,7 @@ class RoleMiddleware
         }
 
         // Pemeriksaan role lainnya.
-        if (!in_array($user->role, $roles, true)) {
+        if (! in_array($user->role, $roles, true)) {
             abort(403, 'Anda tidak memiliki akses ke halaman ini.');
         }
 

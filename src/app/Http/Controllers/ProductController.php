@@ -17,15 +17,6 @@ class ProductController extends Controller
         return auth()->user();
     }
 
-    private function ensureAdministrator(): void
-    {
-        abort_unless(
-            $this->currentUser()?->isAdministrator(),
-            403,
-            'Anda tidak memiliki akses ke halaman ini.'
-        );
-    }
-
     private function ensureTenantAccess(): void
     {
         $user = $this->currentUser();
@@ -40,7 +31,7 @@ class ProductController extends Controller
             'Anda tidak memiliki akses ke halaman ini.'
         );
 
-        if (!$user->isAdministrator()) {
+        if (! $user->isAdministrator()) {
             abort_unless(
                 $user->tenant_id,
                 403,
@@ -65,19 +56,13 @@ class ProductController extends Controller
 
     /* -------------------------------------------------------------------------- */
 
-
     /* Helper */
     /* -------------------------------------------------------------------------- */
-
-    private function isEmployee(): bool
-    {
-        return $this->currentUser()?->role === 'tenant_employee';
-    }
 
     private function generateProductCode(): string
     {
         do {
-            $code = 'PR-' . str_pad(
+            $code = 'PR-'.str_pad(
                 (string) random_int(0, 999999),
                 6,
                 '0',
@@ -95,7 +80,7 @@ class ProductController extends Controller
         $query = Product::query()->with('tenant');
 
         // Tenant hanya dapat mengakses produk miliknya sendiri.
-        if (!$user->isAdministrator()) {
+        if (! $user->isAdministrator()) {
             $query->where('tenant_id', $user->tenant_id);
         }
 
@@ -133,7 +118,6 @@ class ProductController extends Controller
     }
 
     /* -------------------------------------------------------------------------- */
-
 
     /* Index, Search & Pagination */
     /* -------------------------------------------------------------------------- */
@@ -189,7 +173,6 @@ class ProductController extends Controller
     }
 
     /* -------------------------------------------------------------------------- */
-
 
     /* Create Product */
     /* -------------------------------------------------------------------------- */
@@ -249,7 +232,6 @@ class ProductController extends Controller
 
     /* -------------------------------------------------------------------------- */
 
-
     /* Product Detail */
     /* -------------------------------------------------------------------------- */
 
@@ -276,7 +258,6 @@ class ProductController extends Controller
     }
 
     /* -------------------------------------------------------------------------- */
-
 
     /* Edit Product */
     /* -------------------------------------------------------------------------- */
@@ -362,7 +343,6 @@ class ProductController extends Controller
 
     /* -------------------------------------------------------------------------- */
 
-
     /* Product Availability */
     /* -------------------------------------------------------------------------- */
 
@@ -379,7 +359,7 @@ class ProductController extends Controller
             ->firstOrFail();
 
         $product->update([
-            'is_active' => !$product->is_active,
+            'is_active' => ! $product->is_active,
         ]);
 
         return redirect()
@@ -393,7 +373,6 @@ class ProductController extends Controller
     }
 
     /* -------------------------------------------------------------------------- */
-
 
     /* Soft Delete */
     /* -------------------------------------------------------------------------- */
@@ -431,7 +410,7 @@ class ProductController extends Controller
         $query = Product::onlyTrashed()->with('tenant');
 
         // Kepala Tenant hanya melihat produk milik tenant sendiri.
-        if (!auth()->user()->isAdministrator()) {
+        if (! auth()->user()->isAdministrator()) {
             $query->where('tenant_id', auth()->user()->tenant_id);
         }
 
@@ -472,7 +451,7 @@ class ProductController extends Controller
 
         $query = Product::onlyTrashed();
 
-        if (!auth()->user()->isAdministrator()) {
+        if (! auth()->user()->isAdministrator()) {
             $query->where('tenant_id', auth()->user()->tenant_id);
         }
 
@@ -497,7 +476,7 @@ class ProductController extends Controller
 
         $query = Product::onlyTrashed();
 
-        if (!auth()->user()->isAdministrator()) {
+        if (! auth()->user()->isAdministrator()) {
             $query->where('tenant_id', auth()->user()->tenant_id);
         }
 

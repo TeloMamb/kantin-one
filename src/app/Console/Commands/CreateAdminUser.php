@@ -10,12 +10,14 @@ use Illuminate\Support\Str;
 class CreateAdminUser extends Command
 {
     protected $signature = 'app:create-admin';
+
     protected $description = 'Create the first administrator account';
 
     public function handle(): int
     {
         if (User::where('is_protected', true)->exists()) {
             $this->error('Akun Super Admin utama sudah terdaftar.');
+
             return self::FAILURE;
         }
 
@@ -26,11 +28,13 @@ class CreateAdminUser extends Command
         // Validasi email
         if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $this->error('Format email tidak valid.');
+
             return self::FAILURE;
         }
 
         if (User::where('email', $email)->exists()) {
             $this->error('Email tersebut sudah terdaftar.');
+
             return self::FAILURE;
         }
 
@@ -41,11 +45,13 @@ class CreateAdminUser extends Command
             preg_match('/\s/u', $username)
         ) {
             $this->error('Username wajib diisi, tidak boleh menggunakan huruf besar atau spasi.');
+
             return self::FAILURE;
         }
 
         if (User::where('username', $username)->exists()) {
             $this->error('Username tersebut sudah digunakan.');
+
             return self::FAILURE;
         }
 
@@ -55,6 +61,7 @@ class CreateAdminUser extends Command
 
         if (empty($password) || $password !== $confirmation) {
             $this->error('Password kosong atau tidak cocok.');
+
             return self::FAILURE;
         }
 

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['code', 'name', 'description', 'phone', 'email', 'location', 'is_active',])]
+#[Fillable(['code', 'name', 'description', 'phone', 'email', 'location', 'is_active'])]
 
 class Tenant extends Model
 {
@@ -45,7 +45,6 @@ class Tenant extends Model
             ->where('role', 'tenant_employee');
     }
 
-    
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
