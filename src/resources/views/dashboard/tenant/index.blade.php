@@ -1,8 +1,8 @@
-@extends('layouts.app')
-
-@section('title', 'Manajemen Pesanan')
-
-@section('content')
+@extends('layouts.tenantdashboard')
+@section('title', 'Dashboard')
+@section('page-title', 'Dashboard')
+@section('page-description', 'Selamat datang di Kantin.ONE Management System.')
+@section('dashboard-content')
 <div class="tenant-orders-page">
 
     <header class="tenant-orders-header">
