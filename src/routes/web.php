@@ -4,24 +4,62 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TenantController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
-    return auth()->check()
-        ? redirect()->route('dashboard')
-        : redirect()->route('login');
+    if (! Auth::check()) {
+        return redirect()->route('login');
+    }
+
+    return match (Auth::user()->role) {
+        'super_admin', 'administrator' => redirect()->route('dashboard'),
+        'canteen_manager' => redirect()->route('dashboard.canteen_manager'),
+        'tenant', 'tenant_employee' => redirect()->route('dashboard.tenant'),
+        default => abort(403),
+    };
 });
+
+/* Order Page - Customer */
+/* -------------------------------------------------------------------------- */
+Route::get('/orders', function () {
+    return view('orders.customer.index');
+})->name('customer.orders.index');
+
+Route::get('/pesan/tenant', function () {
+    return view('orders.customer.tenants');
+})->name('customer.orders.tenants');
+
+Route::get('/pesan/tenant/{tenant}', function ($tenant) {
+    return view('orders.customer.products', [
+        'tenantSlug' => $tenant
+    ]);
+})->name('customer.orders.products');
+
+Route::get('/pesan/keranjang', function () {
+    return view('orders.customer.cart');
+})->name('customer.orders.cart');
+
+Route::get('/pesan/checkout', function () {
+    return view('orders.customer.checkout');
+})->name('customer.orders.checkout');
+
+Route::get('/pesan/konfirmasi', function () {
+    return view('orders.customer.confirmation');
+})->name('customer.orders.confirmation');
+
+Route::get('/pesan/status', function () {
+    return view('orders.customer.status');
+})->name('customer.orders.status');
+/* -------------------------------------------------------------------------- */
+
 
 Route::middleware(['auth', 'prevent.back', 'role:administrator'])->group(function () {
 
-    /* Pages */
+    /* Login Page */
     /* -------------------------------------------------------------------------- */
     Route::get('/dashboard', function () {
         return view('dashboard.index');
     })->name('dashboard');
-
-    Route::get('/orders', function () {
-        return view('orders.index');
-    })->name('orders.index');
     /* -------------------------------------------------------------------------- */
 
     /* User Management */
@@ -198,4 +236,37 @@ Route::middleware(['auth', 'prevent.back', 'role:administrator'])->group(functio
 
     /* -------------------------------------------------------------------------- */
 
+});
+
+/* Dashboard - Kepala Pengelola Tenant */
+/* -------------------------------------------------------------------------- */
+Route::middleware(['auth', 'prevent.back', 'role:canteen_manager'])->group(function () {
+    Route::get('/pengelola-tenant/dashboard', function () {
+        return view('dashboard.canteen_manager.index');
+    })->name('dashboard.canteen_manager');
+
+    Route::get('/tenant/pesanan', function () {
+        return view('orders.tenant.index');
+    })->name('tenant.orders.index');
+
+    Route::get('/tenant/penjualan', function () {
+        return view('orders.tenant.sales');
+    })->name('tenant.sales.index');
+
+    Route::get('/tenant/dashboard', function () {
+        return view('orders.tenant.dashboard');
+    })->name('tenant.dashboard');
+
+    Route::get('/tenant/produk', function () {
+        return view('orders.tenant.products');
+    })->name('tenant.products.index');
+    });
+/* -------------------------------------------------------------------------- */
+
+/* Dashboard - Kepala Tenant & Pegawai Tenant */
+/* -------------------------------------------------------------------------- */
+Route::middleware(['auth', 'prevent.back', 'role:tenant,tenant_employee'])->group(function () {
+    Route::get('/tenant/dashboard', function () {
+        return view('dashboard.tenant.index');
+    })->name('dashboard.tenant');
 });

@@ -13,7 +13,7 @@ class RoleMiddleware
         $user = $request->user();
 
         if (! $user) {
-            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+            return redirect()->route('login');
         }
 
         // Super Admin memiliki seluruh akses Administrator.
@@ -21,9 +21,19 @@ class RoleMiddleware
             return $next($request);
         }
 
-        // Pemeriksaan role lainnya.
+        // Pemeriksaan role.
         if (! in_array($user->role, $roles, true)) {
-            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+
+            // Redirect berdasarkan role pengguna saat ini.
+            $dashboard = match ($user->role) {
+                'super_admin', 'administrator' => 'dashboard',
+                'canteen_manager' => 'dashboard.canteen_manager',
+                'tenant', 'tenant_employee' => 'dashboard.tenant',
+
+                default => 'login',
+            };
+
+            return redirect()->route($dashboard);
         }
 
         return $next($request);

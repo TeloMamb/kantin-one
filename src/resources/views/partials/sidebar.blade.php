@@ -4,16 +4,10 @@
     $menus = match ($role) {
         'super_admin', 'administrator' => [
             [
-                'label' => 'Dashboard',
+                'label' => 'Beranda',
                 'icon' => 'fa-solid fa-house',
                 'url' => '/dashboard',
                 'active' => ['dashboard'],
-            ],
-            [
-                'label' => 'Aplikasi Pemesanan Kantin',
-                'icon' => 'fa-solid fa-users',
-                'url' => route('orders.index'),
-                'active' => ['orders*'],
             ],
             [
                 'label' => 'Manajemen Pengguna',
@@ -32,6 +26,24 @@
                 'icon' => 'fa-solid fa-users',
                 'url' => route('products.index'),
                 'active' => ['products*'],
+            ],
+            [
+                'label' => 'Aplikasi Pemesanan Pelanggan',
+                'icon' => 'fa-solid fa-users',
+                'url' => '#',
+                'active' => ['orders.customer*'],
+            ],
+            [
+                'label' => 'Aplikasi Monitoring Pesanan',
+                'icon' => 'fa-solid fa-users',
+                'url' => '#',
+                'active' => ['orders.customer*'],
+            ],
+            [
+                'label' => 'Aplikasi Verifikasi Pesanan',
+                'icon' => 'fa-solid fa-users',
+                'url' => '#',
+                'active' => ['orders.customer*'],
             ],
             [
                 'label' => 'Laporan',
